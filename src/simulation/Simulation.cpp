@@ -2545,12 +2545,12 @@ int Simulation::try_move(int i, int x, int y, int nx, int ny)
 	if (!e) //if no movement
 	{
 		int rt = TYP(r);
-		if (rt == PT_WOOD)
+		/* if (rt == PT_WOOD)
 		{
 			float vel = std::sqrt(std::pow(parts[i].vx, 2) + std::pow(parts[i].vy, 2));
 			if (vel > 5)
 				part_change_type(ID(r), nx, ny, PT_SAWD);
-		}
+		} // */
 		if (!(elements[parts[i].type].Properties & TYPE_ENERGY))
 			return 0;
 		if (!legacy_enable && parts[i].type==PT_PHOT && r)//PHOT heat conduction

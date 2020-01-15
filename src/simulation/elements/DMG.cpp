@@ -98,8 +98,8 @@ static int update(UPDATE_FUNC_ARGS)
 											sim->part_change_type(ID(rr), x+nxi, y+nxj, PT_BRMT);
 											parts[ID(rr)].ctype = PT_TUNG;
 										}
-										else if (t == PT_WOOD)
-											sim->part_change_type(ID(rr), x+nxi, y+nxj, PT_SAWD);
+										/*else if (t == PT_WOOD)
+											sim->part_change_type(ID(rr), x+nxi, y+nxj, PT_SAWD); // */
 									}
 								}
 							}

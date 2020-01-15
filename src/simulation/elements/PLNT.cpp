@@ -82,7 +82,7 @@ static int update(UPDATE_FUNC_ARGS)
 						parts[i].life = RNG::Ref().between(60, 119);
 					}
 					break;
-				case PT_WOOD:
+				/*case PT_WOOD:
 					rndstore = RNG::Ref().gen();
 					if (surround_space && !(rndstore%4) && parts[i].tmp==1)
 					{
@@ -99,7 +99,7 @@ static int update(UPDATE_FUNC_ARGS)
 							parts[np].temp = parts[i].temp;
 						}
 					}
-					break;
+					break;// */
 				default:
 					continue;
 				}

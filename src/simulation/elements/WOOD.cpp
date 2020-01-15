@@ -1,3 +1,4 @@
+/*
 #include "common/tpt-minmax.h"
 #include "simulation/ElementCommon.h"
 
@@ -71,4 +72,4 @@ static int graphics(GRAPHICS_FUNC_ARGS)
 		*colb += (int)restrict_flt((273-maxtemp)/1.5,0,150);
 	}
 	return 0;
-}
+} // */
