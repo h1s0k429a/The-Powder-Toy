@@ -467,6 +467,7 @@ if GetOption('debugging'):
 			env.Append(CCFLAGS=['/MDd'])
 	else:
 		env.Append(CCFLAGS=['-Wall', '-g'])
+		env.Append(CCFLAGS=['-Wl,--subsystem,console'])
 		env.Append(CPPDEFINES=['DEBUG'])
 elif GetOption('release'):
 	if msvc:
