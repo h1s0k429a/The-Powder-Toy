@@ -35,7 +35,6 @@
 #include "lua/LuaScriptHelper.h"
 #endif
 
-extern int Element_PPIP_ppip_changed;
 extern int Element_LOLZ_RuleTable[9][9];
 extern int Element_LOLZ_lolz[XRES/9][YRES/9];
 extern int Element_LOVE_RuleTable[9][9];
@@ -270,7 +269,6 @@ int Simulation::Load(GameSave * save, bool includePressure, int fullX, int fullY
 	}
 	parts_lastActiveIndex = NPART-1;
 	force_stacking_check = true;
-	Element_PPIP_ppip_changed = 1;
 	RecalcFreeParticles(false);
 
 	// fix SOAP links using soapList, a map of old particle ID -> new particle ID
@@ -2351,7 +2349,7 @@ void Simulation::init_can_move()
 		int stkm_move = 0;
 		if (elements[destinationType].Properties & (TYPE_LIQUID | TYPE_GAS))
 			stkm_move = 2;
-		if (!destinationType || destinationType == PT_PRTO || destinationType == PT_SPAWN || destinationType == PT_SPAWN2)
+		if (!destinationType ||  destinationType == PT_SPAWN || destinationType == PT_SPAWN2)
 			stkm_move = 2;
 		can_move[PT_STKM][destinationType] = stkm_move;
 		can_move[PT_STKM2][destinationType] = stkm_move;
@@ -2400,7 +2398,7 @@ void Simulation::init_can_move()
 		 || destinationType == PT_ISOZ || destinationType == PT_ISZS || destinationType == PT_QRTZ || destinationType == PT_PQRT
 		 || destinationType == PT_H2   || destinationType == PT_BGLA || destinationType == PT_C5)
 			can_move[PT_PHOT][destinationType] = 2;
-		if (destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR && destinationType != PT_PRTI && destinationType != PT_PRTO)
+		if (destinationType != PT_DMND && destinationType != PT_INSL && destinationType != PT_VOID && destinationType != PT_PVOD && destinationType != PT_VIBR && destinationType != PT_BVBR )
 		{
 			can_move[PT_PROT][destinationType] = 2;
 			can_move[PT_GRVT][destinationType] = 2;
@@ -2565,27 +2563,7 @@ int Simulation::try_move(int i, int x, int y, int nx, int ny)
 		{
 			if (!parts[ID(r)].ctype)
 				parts[ID(r)].ctype = parts[i].type;
-		}
-		if (rt==PT_PRTI && (elements[parts[i].type].Properties & TYPE_ENERGY))
-		{
-			int nnx, count;
-			for (count=0; count<8; count++)
-			{
-				if (isign(x-nx)==isign(portal_rx[count]) && isign(y-ny)==isign(portal_ry[count]))
-					break;
-			}
-			count = count%8;
-			parts[ID(r)].tmp = (int)((parts[ID(r)].temp-73.15f)/100+1);
-			if (parts[ID(r)].tmp>=CHANNELS) parts[ID(r)].tmp = CHANNELS-1;
-			else if (parts[ID(r)].tmp<0) parts[ID(r)].tmp = 0;
-			for ( nnx=0; nnx<80; nnx++)
-				if (!portalp[parts[ID(r)].tmp][count][nnx].type)
-				{
-					portalp[parts[ID(r)].tmp][count][nnx] = parts[i];
-					parts[i].type=PT_NONE;
-					break;
-				}
-		}
+		}		
 		return 0;
 	}
 
@@ -4296,17 +4274,6 @@ killed:
 					}
 					r = pmap[fin_y][fin_x];
 
-					if ((TYP(r)==PT_PIPE || TYP(r) == PT_PPIP) && !TYP(parts[ID(r)].ctype))
-					{
-						parts[ID(r)].ctype =  parts[i].type;
-						parts[ID(r)].temp = parts[i].temp;
-						parts[ID(r)].tmp2 = parts[i].life;
-						parts[ID(r)].pavg[0] = parts[i].tmp;
-						parts[ID(r)].pavg[1] = parts[i].ctype;
-						kill_part(i);
-						continue;
-					}
-
 					if (TYP(r))
 						parts[i].ctype &= elements[TYP(r)].PhotonReflectWavelengths;
 
@@ -5078,20 +5045,6 @@ void Simulation::BeforeSim()
 			}
 		}
 
-		// update PPIP tmp?
-		if (Element_PPIP_ppip_changed)
-		{
-			for (int i = 0; i <= parts_lastActiveIndex; i++)
-			{
-				if (parts[i].type==PT_PPIP)
-				{
-					parts[i].tmp |= (parts[i].tmp&0xE0000000)>>3;
-					parts[i].tmp &= ~0xE0000000;
-				}
-			}
-			Element_PPIP_ppip_changed = 0;
-		}
-
 		// Simulate GoL
 		// GSPEED is frames per generation
 		if (elementCount[PT_LIFE]>0 && ++CGOL>=GSPEED)
@@ -5235,17 +5188,7 @@ String Simulation::BasicParticleInfo(Particle const &sample_part)
 	{
 		sampleInfo << "Molten " << ElementResolve(ctype, -1);
 	}
-	else if ((type == PT_PIPE || type == PT_PPIP) && ctype && IsValidElement(ctype))
-	{
-		if (ctype == PT_LAVA && pavg1int && IsValidElement(pavg1int))
-		{
-			sampleInfo << ElementResolve(type, -1) << " with molten " << ElementResolve(pavg1int, -1);
-		}
-		else
-		{
-			sampleInfo << ElementResolve(type, -1) << " with " << ElementResolve(ctype, pavg1int);
-		}
-	}
+	
 	else
 	{
 		sampleInfo << ElementResolve(type, ctype);

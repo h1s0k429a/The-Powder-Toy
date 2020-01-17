@@ -231,14 +231,6 @@ static int update(UPDATE_FUNC_ARGS)
 						else if (sender==PT_NSCN && parts[ID(r)].tmp == 3) parts[ID(r)].tmp = 1;
 					}
 					continue;
-				case PT_PPIP:
-					if (parts[i].life == 3 && pavg!=PT_INSL)
-					{
-						void Element_PPIP_flood_trigger(Simulation * sim, int x, int y, int sparkedBy);
-						if (sender == PT_NSCN || sender == PT_PSCN || sender == PT_INST)
-							Element_PPIP_flood_trigger(sim, x+rx, y+ry, sender);
-					}
-					continue;
 				case PT_NTCT: case PT_PTCT: case PT_INWR:
 					if (sender==PT_METL && pavg!=PT_INSL && parts[i].life<4)
 					{

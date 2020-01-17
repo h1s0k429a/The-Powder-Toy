@@ -39,5 +39,5 @@ void Element::Element_PSTE()
 	LowTemperature = ITL;
 	LowTemperatureTransition = NT;
 	HighTemperature = 747.0f;
-	HighTemperatureTransition = PT_BRCK;
+	HighTemperatureTransition = PT_PSTS;
 }

@@ -1279,16 +1279,7 @@ void GameSave::readOPS(char * data, int dataLength)
 							}
 						}
 						break;
-					case PT_PIPE:
-					case PT_PPIP:
-						if (savedVersion < 93 && !fakeNewerVersion)
-						{
-							if (particles[newIndex].ctype == 1)
-								particles[newIndex].tmp |= 0x00020000; //PFLAG_INITIALIZING
-							particles[newIndex].tmp |= (particles[newIndex].ctype-1)<<18;
-							particles[newIndex].ctype = particles[newIndex].tmp&0xFF;
-						}
-						break;
+
 					case PT_TSNS:
 					case PT_HSWC:
 					case PT_PSNS:
@@ -1810,7 +1801,7 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 		int gnum = 0;
 		i = particleIDMap[j];
 		ty = data[pty+j];
-		if (i && (ty==PT_CLNE || (ty==PT_PCLN && ver>=43) || (ty==PT_BCLN && ver>=44) || (ty==PT_SPRK && ver>=21) || (ty==PT_LAVA && ver>=34) || (ty==PT_PIPE && ver>=43) || (ty==PT_LIFE && ver>=51) || (ty==PT_PBCN && ver>=52) || (ty==PT_WIRE && ver>=55) || (ty==PT_STOR && ver>=59) || (ty==PT_CONV && ver>=60)))
+		if (i && (ty==PT_CLNE || (ty==PT_PCLN && ver>=43) || (ty==PT_BCLN && ver>=44) || (ty==PT_SPRK && ver>=21) || (ty==PT_LAVA && ver>=34) || (ty==PT_LIFE && ver>=51) || (ty==PT_PBCN && ver>=52) || (ty==PT_WIRE && ver>=55) || (ty==PT_STOR && ver>=59) || (ty==PT_CONV && ver>=60)))
 		{
 			if (p >= dataLength)
 				throw ParseException(ParseException::Corrupt, "Not enough data at line " MTOS(__LINE__) " in " MTOS(__FILE__));
@@ -1939,14 +1930,7 @@ void GameSave::readPSv(char * saveDataChar, int dataLength)
 			}
 			if (ver < 93)
 			{
-				if (particles[i-1].type == PT_PIPE || particles[i-1].type == PT_PPIP)
-				{
-					if (particles[i-1].ctype == 1)
-						particles[i-1].tmp |= 0x00020000; //PFLAG_INITIALIZING
-					particles[i-1].tmp |= (particles[i-1].ctype-1)<<18;
-					particles[i-1].ctype = particles[i-1].tmp&0xFF;
-				}
-				else if (particles[i-1].type == PT_HSWC || particles[i-1].type == PT_PUMP)
+				if (particles[i-1].type == PT_HSWC || particles[i-1].type == PT_PUMP)
 				{
 					particles[i-1].tmp = 0;
 				}
@@ -2366,12 +2350,8 @@ char * GameSave::serialiseOPS(unsigned int & dataLength)
 				{
 					RESTRICTVERSION(92, 0);
 				}
-				else if (particles[i].type == PT_PIPE || particles[i].type == PT_PPIP)
-				{
-					RESTRICTVERSION(93, 0);
-				}
 				if (particles[i].type == PT_TSNS || particles[i].type == PT_PSNS
-				        || particles[i].type == PT_HSWC || particles[i].type == PT_PUMP)
+				   || particles[i].type == PT_HSWC || particles[i].type == PT_PUMP)
 				{
 					if (particles[i].tmp == 1)
 					{
@@ -2762,8 +2742,8 @@ bool GameSave::TypeInCtype(int type, int ctype)
 	        (type == PT_CLNE || type == PT_PCLN || type == PT_BCLN || type == PT_PBCN ||
 	        type == PT_STOR || type == PT_CONV || type == PT_STKM || type == PT_STKM2 ||
 	        type == PT_FIGH || type == PT_LAVA || type == PT_SPRK || type == PT_PSTN ||
-	        type == PT_CRAY || type == PT_DTEC || type == PT_DRAY || type == PT_PIPE ||
-	        type == PT_PPIP || type == PT_LDTC);
+	        type == PT_CRAY || type == PT_DTEC || type == PT_DRAY || 
+	        type == PT_LDTC);
 }
 
 bool GameSave::TypeInTmp(int type)
