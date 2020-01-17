@@ -119,13 +119,6 @@ static int update(UPDATE_FUNC_ARGS)
 					if (RNG::Ref().chance(3, 200))
 						sim->part_change_type(ID(r),x+rx,y+ry,PT_DUST);
 					break;
-				case PT_DYST:
-					if (RNG::Ref().chance(3, 200))
-						sim->part_change_type(ID(r),x+rx,y+ry,PT_YEST);
-					break;
-				case PT_YEST:
-					sim->part_change_type(ID(r),x+rx,y+ry,PT_DYST);
-					break;
 				case PT_PLEX:
 					if (RNG::Ref().chance(3, 200))
 						sim->part_change_type(ID(r),x+rx,y+ry,PT_GOO);
